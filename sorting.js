@@ -17,7 +17,11 @@ function mergeSort(leftSide, rightSide) {
     .concat(rightSide.slice(rightIndex))
 }
 
-function sort(numbers) {
+function sort() {
+  const numbers = this
+  if (numbers === undefined || !Array.isArray(numbers)) {
+    throw new Error('Please provide the valid array')
+  }
   if (numbers.length <= 1) {
     return numbers
   }
@@ -25,9 +29,11 @@ function sort(numbers) {
 
   const leftSide = numbers.slice(0, midPoint)
   const rightSide = numbers.slice(midPoint)
-  return mergeSort(sort(leftSide), sort(rightSide))
+  return mergeSort(sort.call(leftSide), sort.call(rightSide))
 }
 
-console.log(sort([3, 2]))
+Array.prototype.sort = sort
 
-console.log(sort([3, 4, 1, 2, 6, 8, 7, 0, 9]))
+console.log([3, 2].sort())
+
+console.log([3, 4, 1, 2, 6, 8, 7, 0, 9].sort())
