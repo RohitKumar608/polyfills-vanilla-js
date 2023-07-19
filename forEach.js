@@ -4,13 +4,11 @@ Array.prototype.myForEach = function (callback) {
     throw new Error('Please provide the valid array')
   }
   for (let index = 0; index < array.length; index++) {
-    callback(array[index], index)
+    callback.call(array, array[index], index)
   }
 }
 
 let myArray = [1, 2, 3]
-myArray.myForEach((value, idx) => {
-  myArray[idx] = value * value
-})
+myArray.myForEach((value, idx) => (myArray[idx] = value * value))
 
-// console.log(myArray)
+console.log(myArray)

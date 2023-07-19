@@ -1,4 +1,4 @@
-body{
+body {
   margin: 0;
   background-color: #222;
 }
@@ -7,36 +7,12 @@ body{
   margin: 0 auto;
 }
 
-header{
-  background-color: rgba(0, 255, 106, 0.733);
-}
-
-header::after{
+header::after {
   content: '';
   display: table;
   clear: both;
 }
-
-.logo{
-  float: left;
-  padding: 10px 0;
-}
-nav{
-  float: right;
-}
-
-nav ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-nav li {
-  display: inline-block;
-}
-
-nav a:hover{
-  color: rgb(28, 49, 22);
-  margin-left: 20px;
-  padding-top: 27px;
+h1 {
+  text-align: center;
+  color: wheat;
 }
