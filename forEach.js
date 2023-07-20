@@ -1,10 +1,9 @@
-Array.prototype.myForEach = function (callback) {
-  let array = this
-  if (array === undefined || !Array.isArray(array)) {
-    throw new Error('Please provide the valid array')
+Array.prototype.myForEach = function (callback, context) {
+  if (this === undefined || !Array.isArray(this)) {
+    throw new Error('Please provide the valid this')
   }
-  for (let index = 0; index < array.length; index++) {
-    callback.call(array, array[index], index)
+  for (let index = 0; index < this.length; index++) {
+    callback.call(context, this[index], index, this)
   }
 }
 
