@@ -1,8 +1,9 @@
 function debounce(fn, delay) {
   let timeoutId = ''
-  return function (params) {
+  return function (...args) {
+    const context = this
     clearTimeout(timeoutId)
-    timeoutId = setTimeout(fn.bind(this, params), delay)
+    timeoutId = setTimeout(() => fn.apply(context, args), delay)
   }
 }
 
