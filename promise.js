@@ -34,24 +34,30 @@ class MyPromise {
     }
   }
   onSuccess(value) {
-    if (this.state !== STATE.PENDING) return
-    if (value instanceof MyPromise) {
-      value.then(this.onSuccessBind, this.onFailBind)
-      return
-    }
-    this.value = value
-    this.state = STATE.FULFILLED
-    this.runCallbacks()
+    // added in queueMicrotask to execute before setTimeout
+    queueMicrotask(() => {
+      if (this.state !== STATE.PENDING) return
+      if (value instanceof MyPromise) {
+        value.then(this.onSuccessBind, this.onFailBind)
+        return
+      }
+      this.value = value
+      this.state = STATE.FULFILLED
+      this.runCallbacks()
+    })
   }
   onFail(value) {
-    if (this.state !== STATE.PENDING) return
-    if (value instanceof MyPromise) {
-      value.then(this.onSuccessBind, this.onFailBind)
-      return
-    }
-    this.value = value
-    this.state = STATE.REJECTED
-    this.runCallbacks()
+    // added in queueMicrotask to execute before setTimeout
+    queueMicrotask(() => {
+      if (this.state !== STATE.PENDING) return
+      if (value instanceof MyPromise) {
+        value.then(this.onSuccessBind, this.onFailBind)
+        return
+      }
+      this.value = value
+      this.state = STATE.REJECTED
+      this.runCallbacks()
+    })
   }
   then(thenCb, catchCb) {
     return new MyPromise((resolve, reject) => {
