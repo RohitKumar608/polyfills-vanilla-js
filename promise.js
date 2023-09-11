@@ -5,53 +5,100 @@ const STATE = {
 }
 
 class MyPromise {
-  thenCsb = []
-  catchCsb = []
+  thenCbs = []
+  catchCbs = []
   value = ''
   state = STATE.PENDING
-  onSuccess = this.onSuccess.bind(this)
-  onFail = this.onFail.bind(this)
+  onSuccessBind = this.onSuccess.bind(this)
+  onFailBind = this.onFail.bind(this)
 
   constructor(executor) {
     try {
-      executor(this.onSuccess, this.onFail)
+      executor(this.onSuccessBind, this.onFailBind)
     } catch (error) {
       this.onFail(error)
     }
   }
   runCallbacks() {
     if (this.state === STATE.FULFILLED) {
-      this.thenCsb.forEach((cb) => {
+      this.thenCbs.forEach((cb) => {
         cb(this.value)
       })
-      this.thenCsb = []
+      this.thenCbs = []
     }
     if (this.state === STATE.REJECTED) {
-      this.catchCsb.forEach((cb) => {
+      this.catchCbs.forEach((cb) => {
         cb(this.value)
       })
-      this.catchCsb = []
+      this.catchCbs = []
     }
   }
   onSuccess(value) {
     if (this.state !== STATE.PENDING) return
+    if (value instanceof MyPromise) {
+      value.then(this.onSuccessBind, this.onFailBind)
+      return
+    }
     this.value = value
     this.state = STATE.FULFILLED
     this.runCallbacks()
   }
   onFail(value) {
     if (this.state !== STATE.PENDING) return
+    if (value instanceof MyPromise) {
+      value.then(this.onSuccessBind, this.onFailBind)
+      return
+    }
     this.value = value
     this.state = STATE.REJECTED
     this.runCallbacks()
   }
-  then(cb) {
-    this.thenCsb.push(cb)
-    this.runCallbacks()
+  then(thenCb, catchCb) {
+    return new MyPromise((resolve, reject) => {
+      this.thenCbs.push((result) => {
+        if (thenCb == null) {
+          resolve(result)
+          return
+        }
+
+        try {
+          resolve(thenCb(result))
+        } catch (error) {
+          reject(error)
+        }
+      })
+
+      this.catchCbs.push((result) => {
+        if (catchCb == null) {
+          reject(result)
+          return
+        }
+
+        try {
+          resolve(catchCb(result))
+        } catch (error) {
+          reject(error)
+        }
+      })
+
+      this.runCallbacks()
+    })
   }
   catch(cb) {
-    this.catchCsb.push(cb)
-    this.runCallbacks()
+    this.then(null, cb)
+  }
+
+  finally(cb) {
+    return this.then(
+      (result) => {
+        cb()
+        return result
+      },
+      (result) => {
+        cb()
+        throw result
+      }
+    )
   }
   static resolve(value) {
     return new MyPromise((resolve, reject) => {
